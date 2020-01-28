@@ -75,6 +75,11 @@ discrete_color = data.frame(
   to   = seq(10, 100, 10),
   color = substring(viridis(10, option = "C", direction = 1), 0, 7)) %>% 
   list_parse()
+
+# Some notes:
+# dataClasses = discrete_color
+# dataClasses = color_classes(c(seq(0, 10, by = 2), 50))
+# dataLabels = list(enabled = TRUE, format = '{point.name}'),
 ```
 
 ```{r}
