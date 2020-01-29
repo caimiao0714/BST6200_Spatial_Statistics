@@ -2,7 +2,9 @@
 title: "Homework 1"
 author: "Miao Cai <miao.cai@slu.edu>"
 date: "1/27/2020"
-output: html_document
+output: 
+  html_document:
+    code_folding: true
 ---
 
 ```{r setup, include=FALSE}
@@ -16,7 +18,7 @@ Data source: [Georgia Department of Public Health's Data Warehouse](https://oasi
 
 
 ```{r}
-pacman::p_load(sf, ggplot2, readxl, dplyr)
+pacman::p_load(sf, ggplot2, readxl, dplyr, highcharter)
 
 d_white = read_excel("data/dph_wq_Birth_Rate_by_Residence__White_1_27_20_05_21_45_601531_PM.xlsx") %>% 
   slice(3:161) %>% 
@@ -27,19 +29,35 @@ d_black = read_excel("data/dph_wq_Birth_Rate_by_Residence__Black_or_African-Amer
   slice(3:161) %>% 
   `colnames<-`(c("County", "Birth_rate_black")) %>% 
   mutate(Birth_rate_black = as.numeric(Birth_rate_black))
+```
 
+
+
+```{r eval=FALSE,echo=FALSE}
 ga = read_sf("data/Georgia.shp") %>% 
   left_join(d_white, by = c("Name" = "County")) %>% 
   left_join(d_black, by = c("Name" = "County"))
 ```
 
+
 ```{r}
-pacman::p_load(highcharter)
-
-
-mapdata <- get_data_from_map(download_map_data("countries/us/us-ga-all"))
-glimpse(mapdata)
+hcmap("countries/us/us-ga-all", 
+      data = d_white, 
+      value = "Birth_rate_white",
+      joinBy = c("name", "County"),
+      name = "White birth rate",
+      borderColor = "#FAFAFA", 
+      borderWidth = 0.5,
+      tooltip = list(valueDecimals = 2, 
+                     valueSuffix = "%")) %>% 
+  hc_colorAxis(dataClasses = color_classes(seq(0, 100, by = 10))) %>% 
+  hc_legend(layout = "vertical", align = "right",
+            floating = TRUE, valueDecimals = 0, valueSuffix = "%") %>% 
+  hc_title(text = "Birth rates for mothers in Georgia, USA, 2018") %>% 
+  hc_subtitle(text = "Georgia Department of Public Health's Data Warehouse") %>% 
+  hc_add_theme(hc_theme_ft())
 ```
+
 
 ```{r}
 hcmap("countries/us/us-ga-all", 
@@ -58,8 +76,6 @@ hcmap("countries/us/us-ga-all",
   hc_legend(layout = "vertical", align = "right",
             floating = TRUE, valueDecimals = 0, valueSuffix = "%") 
 ```
-
-
 
 
 
