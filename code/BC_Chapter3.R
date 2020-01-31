@@ -122,7 +122,7 @@ st_write( g2.new , "georgia.shp" , delete_layer=TRUE )
 #### 3.4  tmap
 ####
 #### 3.4.2  Quick tmap using  qtm
-
+georgia_sf = sf::read_sf("data/Georgia.shp")
 library( tmap )
 data( georgia )
 georgia_sf = st_as_sf( georgia )
