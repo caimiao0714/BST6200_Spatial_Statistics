@@ -2,7 +2,7 @@
 
 **Spring 2020**
 
-**Instructor**: Professor [Steve E. Rigdon](https://www.slu.edu/public-health-social-justice/faculty/rigdon-steven.php)
+**Instructor**: Professor [Steven E. Rigdon](https://www.slu.edu/public-health-social-justice/faculty/rigdon-steven.php)
 
 **Introduction**: This course covers models for spatial data, that is, data that are geographically coded. Specific attention is given to disease rates which may vary across regions
 
