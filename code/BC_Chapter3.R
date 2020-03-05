@@ -28,6 +28,7 @@ unclass( breach )  ## See what breach looks like when we don't use
                    ## the print on a SpatialPoints object
 print( breach )
 print.SpatialPoints( breach )
+windows( 9 , 9 )
 plot( breach )
 getAnywhere(print.SpatialPoints)
 
@@ -73,6 +74,7 @@ georgia[[15]]   ## The geometry is not part of the data frame
 
 windows( 9 , 9 )
 plot( georgia )
+windows( 9 , 9 )
 plot( georgia_sf )  ## Look how the generic function plot acts on objects of class
                     ## sf as opposed to objects of class sp
 plot( georgia_sf[,6] )
@@ -81,14 +83,19 @@ plot( georgia_sf[,4:5])
 head( data.frame(georgia) )
 head( data.frame(georgia_sf) )  ## Note geometry attributes at the end
 
+## Start on Wed 1/29
+
 g_sf_df = data.frame( georgia_sf )
 str( g_sf_df )
+g_sf_df[[15]]
 georgia_geometry = g_sf_df[[15]]
+
 str( georgia_geometry )
-county1 = georgia_geometry[[1]][1] 
-county2 =  georgia_geometry[[1]][2] 
+county1 = georgia_geometry[[1]]
+county2 = georgia_geometry[[2]]
 windows( 8 , 8 )
 plot( county1[[1]][[1]][,1] , county1[[1]][[1]][,2] , type="l" , asp=1 )
+plot( county2[[1]][[1]][,1] , county2[[1]][[1]][,2] , type="l" , asp=1 )
 ## View county1 in Global Enviromnent
 ## or do str( county1 )
 
@@ -96,11 +103,17 @@ g2 = as( georgia_sf , "Spatial" )
 class( g2 )
 class( georgia_sf )
 
+roads
+class( roads )
+windows( 9 , 9 )
+plot( roads )
+
 roads_sf = st_as_sf(roads)
 class(roads_sf)
 r2 = as(roads_sf, "Spatial")
 class(r2)
 
+plot( roads_sf )
 ####
 #### 3.3 Reading and Writing Spatial Data
 
@@ -122,7 +135,7 @@ st_write( g2.new , "georgia.shp" , delete_layer=TRUE )
 #### 3.4  tmap
 ####
 #### 3.4.2  Quick tmap using  qtm
-georgia_sf = sf::read_sf("data/Georgia.shp")
+
 library( tmap )
 data( georgia )
 georgia_sf = st_as_sf( georgia )
@@ -138,13 +151,24 @@ qtm( georgia_sf , fill="MedInc" , text="Name" , text.size=0.7 ,
 
 windows( 9 , 9 )
 qtm( georgia_sf , fill="MedInc" , text="Name" , text.size=0.7 ,
-     format="World_wide" , fill.title="Median Income" )
+     format="World_wide" , style="classic" , 
+     fill.title="Median Income" )
+
+windows( 9 , 9 )
+qtm( georgia_sf , fill="MedInc" , text="Name" , text.size=0.7 ,
+     text.root=5 , fill.title="Median Income" )
 
 #### 3.4.2  Full  tmap  
 
+windows( 9 , 9 )
 plot( georgia_sf )
 
 g = st_union( georgia_sf )   ## Outline of the state of Georgia
+                             ## Look at g in the Global Environment
+                             ## g involves only geometry.
+                             ## The data frame went away.
+class( g )
+windows( 9 , 9 )
 plot( g )
 
 windows( 9 , 9 )
@@ -188,7 +212,8 @@ t2 = tm_shape( georgia ) +
                      title.position=c(0.54,"top"))
 t2
 
-library( grid )   ## for combining plots (par(mfrow=..)) doesn't work
+library( grid )         ## for combining plots 
+                        ## (par(mfrow=..)) doesn't work in tmap
 windows( 12 , 7 )
 grid.newpage()
 pushViewport( viewport( layout=grid.layout(1,2) ) )
@@ -206,6 +231,9 @@ tm_shape( georgia_sf ) +
   tm_borders() +
   tm_text( "Name" , size=0.5 ) +
   tm_layout( frame=FALSE )
+
+#########################################
+### Start here Wed 2/5/2020
 
 index = c(81, 82, 83, 150, 62, 53, 21, 16, 124, 121, 17 )
 georgia_sf.sub = georgia_sf[index,]
@@ -225,20 +253,22 @@ tm_shape( georgia_sf.sub ) +
   tm_layout( frame=FALSE , title="A Subset of Georgia" ,
              title.size=1.6 , title.position=c(0,"bottom") )
 
-## What if we add a noncontiguous county?  
+## What if we add a noncontiguous county? Appling County (county1) 
 windows( 8 , 9 )
 index1 = c(81, 82, 83, 150, 62, 53, 21, 16, 124, 121, 17, 1)
 georgia_sf.sub1 = georgia_sf[index1,]
 tm_shape( georgia_sf.sub1 ) + 
   tm_fill( "gold1" ) +
   tm_borders( "gray" ) +
-  tm_text( "Name" , size=1 ) +
+  tm_text( "Name" , size=1 ) +  
+  tm_shape( g ) +
   tm_borders( lwd=2 ) +
   tm_layout( frame=FALSE , title="A Noncontiguous Subset of Georgia" ,
-             title.size=1.15 , title.position=c(0,"bottom") )
+             title.size=1.0 , title.position=c(0,"bottom") )
 
 ## Show these counties within the context of the entire state of Georgia
 ## Layer 1 (bottom)
+windows( 9 , 9 )
 tm_shape( georgia_sf ) +
   tm_fill( "white" ) +
   tm_borders( "gray" , lwd=0.5 ) +
@@ -254,6 +284,8 @@ tm_shape( georgia_sf ) +
              title.size=1 , title.position=c(0.02,"bottom") )
   
 ##  install.packages( "OpenStreetMap" , dep=TRUE )  
+## OpenStreetMap doesn't seem to work on Windows
+
 library( OpenStreetMap )
 ## May have to use 32-bit version of R. 
 ##   Tools > GlobalOptions  then  
@@ -270,7 +302,6 @@ lr = as.vector( cbind( bbox(georgia.sub)[2,1] , bbox(georgia.sub)[1,2]) )
 ## Download the map from OpenMaps
 MyMap = openmap( ul , lr )
 
-## OpenStreetMap doesn't seem to work on Windows
 
 ##
 ## 3.4.5  Saving Your Map
@@ -279,9 +310,10 @@ data( newhaven )
 proj4string( roads ) = proj4string( blocks )
 
 getwd()   ## Always check this first to see where R will write file
+setwd("C:/Users/srigd/Dropbox/MyCourses/BST6200_Spring_2020/Graphs")
 
-pdf( file="newhaven2.pdf" )   ## Opens file
-#windows( 9 , 7 )
+pdf( file="newhaven3.pdf" )   ## Opens file
+## windows( 9 , 9 )           ## Leave this out if saving file
 tm_shape( blocks ) +
   tm_borders() +
   tm_shape( roads ) +
@@ -297,23 +329,23 @@ pts_sf = st_centroid(georgia_sf)
 png(filename = "Figure3.png", w = 5, h = 7, units = "in", res = 150)
 # make the map
 # windows( 9 , 7 )
-tm_shape(georgia_sf) +
-  tm_fill("olivedrab4") +
-  tm_borders("grey", lwd = 1) +
+tm_shape( georgia_sf ) +
+  tm_fill( "olivedrab4" ) +
+  tm_borders( "grey" , lwd = 1 ) +
   # the points layer
-  tm_shape(pts_sf) +
-  tm_bubbles("PctBlack", title.size = "% Black", col = "gold") +
-  tm_format("NLD")
+  tm_shape( pts_sf ) +
+  tm_bubbles( "PctBlack" , title.size = "% Black" , col = "gold" ) +
+  tm_format( "NLD" )
 # close the png file
 dev.off()
 
 ####
 ####  3.5 Mapping Spatial Data Attributes
 
-rm( list=ls() )
 data( newhaven )
-ls()
 
+class( blocks )
+class( breach )
 ## Convert  sp  objects to  sf  objects
 blocks_sf = st_as_sf( blocks )
 breach_sf = st_as_sf( breach )
@@ -323,7 +355,9 @@ summary( blocks_sf )
 class( blocks_sf )
 str( blocks_sf )
 windows( 9 , 7 )
-plot( blocks_sf )
+plot( blocks_sf , max.plot = 29 )
+windows( 9 , 7 )
+plot( blocks )
 
 summary( breach_sf )
 class( breach_sf )
@@ -340,11 +374,15 @@ plot( tracts_sf )
 blocks_df = data.frame( blocks_sf )
 head( blocks_df )
 colnames( blocks_df )  ## Get column names in data frame
-names( blocks_sf )     ## Get names of colulmns in blocks_sf's data frame
+names( blocks_sf )     ## Get names of columns in blocks_sf's data frame
+
+blocks_df$P_OWNEROCC
 
 data.frame( blocks_sf$P_VACANT )
 blocks_df$P_VACANT
-data.frame( blocks_df$P_VACANT )
+
+str( data.frame( blocks_sf$P_VACANT ) )
+str( blocks_df$P_VACANT )
 
 attach( blocks_df )  ## NOT RECOMMENDED -- This takes all of the 
                      ## columns in blocks_df and creates individual
@@ -355,6 +393,10 @@ windows( 9 , 7 )
 hist( P_VACANT , col="red" , breaks=seq(0,max(P_VACANT)+2,2) )
 detach( blocks_df )
 
+####
+#### Heat maps
+
+?kde.points
 breach.dens = st_as_sf( kde.points(breach,lims=tracts) )
                      ## kde  stands for kernel density estimate
                      ## We'll talk more about these later.
@@ -365,14 +407,23 @@ summary( breach.dens )
 windows( 9 , 7 )
 plot( breach.dens )
 
+####  Close out all graphics windows
+plot( roads )
+locator()
+
 head( blocks_sf )
 blocks_sf$RandVar = rnorm( nrow(blocks_sf) )  ## Creates a new column in
                                               ## the blocks_sf data frame
+head( blocks_sf )
+
+##
 ## 3.5.3 Mapping Polygons and Attributes
+
 windows( 9 , 9 )
+?tmap_mode
 tmap_mode( "plot" )
 tm_shape( blocks_sf ) +
-  tm_polygons( "P_OWNEROCC")
+  tm_polygons( "P_OWNEROCC" )
 
 windows( 9 , 9 )
 ## ... works with  sp  objects too.
@@ -384,10 +435,9 @@ tm_shape( blocks_sf ) +
   tm_polygons( "P_OWNEROCC" , breaks=seq(0,100,10) ) +
   tm_layout( legend.title.size = 1 ,
              legend.text.size = 1 ,
-             legend.position = c(0.5,0.5) )  ## Bad position. Try c(0.1,0.1)
+             legend.position = c(0.1,0.1) )  ## Bad position. Try c(0.1,0.1)
 
 library( RColorBrewer )
-display.brewer.all()  ## ??
 
 brewer.pal( 5 , "Greens" )
 
@@ -404,20 +454,22 @@ tm_shape( blocks_sf ) +
 windows( 9 , 9 )
 tm_shape( blocks_sf ) +
   tm_fill( "P_OWNEROCC" , title="Owner Occupied" , palette="Blues" ) +
-  tm_borders( "gray" , lwd=1.2 ) +
+  tm_borders( "gray" , lwd=2.2 ) +
   tm_layout( legend.title.size=1 )
 
 ## There are several choices for breaks=
 
 p1 = tm_shape( blocks_sf ) +
-       tm_polygons( "P_OWNEROCC" , title="Owner Occupied" , palette="Blues") +
+       tm_polygons( "P_OWNEROCC" , title="Owner Occupied" , 
+                    palette="Blues") +
        tm_layout( legend.title.size=0.7 )
 p2 = tm_shape( blocks_sf ) +
-       tm_polygons( "P_OWNEROCC" , title="Owner Occupied" , palette="Oranges" ,
-                    style="kmeans" ) +
+       tm_polygons( "P_OWNEROCC" , title="Owner Occupied" , 
+                    palette="Oranges" , style="kmeans" ) +
        tm_layout( legend.title.size=0.7 )
 p3 = tm_shape( blocks_sf ) +
-       tm_polygons( "P_OWNEROCC" , title="Owner Occupied" , palette="Greens" ,
+       tm_polygons( "P_OWNEROCC" , title="Owner Occupied" , 
+                    palette="Greens" ,
                     breaks=c(0,round(quantileCuts(blocks$P_OWNEROCC,6),1)) ) +
        tm_layout( legend.title.size=0.7 )
 library( grid )
@@ -452,7 +504,8 @@ tm_shape( blocks_sf , unit="miles" ) +
              legend.hist.size=0.5 )
 
 ## Projections
-
+##  Watch  https://www.youtube.com/watch?v=L9DAFJYbGnM
+##  and    https://www.youtube.com/watch?v=AegebNEzpzA
 proj4string( tracts ) = proj4string( blocks )
 tracts_sf = st_as_sf( tracts )
 tracts_sf = st_transform( tracts_sf , "+proj=longlat +ellps=WGS84")
@@ -464,18 +517,40 @@ windows( 9 , 9 )
 plot( tracts_sf$P_OWNEROCC )
 plot( blocks_sf$P_OWNEROCC )
 
+tmap_mode("plot")    ## as opposed to tmap_mode("view")
+windows( 9 , 9 )
 tm_shape( blocks_sf ) +
   tm_fill( col="POP1990" , convert2density=TRUE ,
-           style="kmeans" , title=expression("Population (per " * km^2 * ")" ) ,
+           title=expression("Population (per " * km^2 * ")" ) ,
            legend.hist=FALSE , id="name" ) +
   tm_borders( "gray25" , alpha=0.5 ) +
   tm_shape( tracts_sf ) +
-  tm_borders( "black" , lwd=2.5 )
-  
-  
+  tm_borders( "black" , lwd=2.5 ) +
+  tm_format_NLD( bg.color="white" , frame=FALSE ,
+                 legend.hist.bg.color="grey90" )
 
-  
-  
-  
-  
-  
+blocks_sf$area = st_area(blocks_sf)/(1000^2) 
+blocks_sf$PopDensity = blocks_sf$POP1990/blocks_sf$area 
+summary( blocks_sf$PopDensity )
+
+tmap_mode("plot")    
+windows( 9 , 9 )
+tm_shape( blocks_sf ) +
+  tm_polygons( col="PopDensity" , convert2density=TRUE ,
+           title=expression("Population (per " * km^2 * ")" ) ,
+           legend.hist=FALSE , id="name" ,
+           breaks=c(0,round(quantileCuts(blocks_sf$PopDensity,4),1))) +
+  tm_borders( "gray25" , alpha=0.5 ) +
+  tm_shape( tracts_sf ) +
+  tm_borders( "black" , lwd=2.5 ) +
+  tm_format_NLD( bg.color="white" , frame=FALSE ,
+                 legend.hist.bg.color="grey90" )
+
+windows( 12 , 8 )
+tm_shape( blocks_sf ) +
+  tm_fill( c("P_RENTROCC" , "P_BLACK" ) ) +
+  tm_borders() +
+  tm_layout( legend.format = list(digits=0) ,
+             legend.position = c("left","bottom") ,
+             legend.text.size = 0.5 ,
+             legend.title.size = 0.8 )
