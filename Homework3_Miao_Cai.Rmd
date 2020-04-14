@@ -5,13 +5,15 @@ title: |
 author: "Miao Cai"
 date: "4/2/2020"
 output:
-  pdf_document: default
+  pdf_document: 
+    number_sections: true
 header-includes:
   - \usepackage{booktabs}
+  - \usepackage{float}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'H')
 ```
 
 Due 5:15 pm, April 15, 2020
@@ -32,3 +34,65 @@ Use the methods of section 6.8 in the book, including
 Explain your reasoning and justify your assertions with the appropriate plots. Submit a PDF file to Blackboard, obtained either by using Word with copy & paste from R, or by creating a PDF file in RMarkdown.
 
 Important note: If you follow the book's development on the fulmar data set, notice that fulmar is the name of the data frame and also one of the variables in the data frame. This can be confusing because you can’t tell whether you should tell R what the data frame is or which variable in the data from to refer to. Sometimes fulmar would translate to smokeyMountain (if you call your data frame smokeyMountain) and sometimes fulmar would translate to Ph (if you're referring to the outcome variable in the data frame).
+
+<!--
+Second, for the homework on the smokey mountain data, use only the (easting,northing) data, and of course the ph data.  The z variable (elevation) might come into play in a more thorough analysis, but I'm not asking you to do this.
+-->
+
+Nearest neighbor interpolation (using Voronoi polygons)
+=======================================================
+
+```{r}
+pacman::p_load(sp, deldir, tmap)
+
+# Modified Carson Farmer code
+voronoipolygons = function(layer) {
+  crds <- layer@coords
+  z <- deldir(crds[,1], crds[,2])
+  w <- tile.list(z)
+  polys <- vector(mode='list', length=length(w))
+  for (i in seq(along=polys)) {
+    pcrds <- cbind(w[[i]]$x, w[[i]]$y)
+    pcrds <- rbind(pcrds, pcrds[1,])
+    polys[[i]] <- Polygons(list(Polygon(pcrds)),
+                           ID=as.character(i))
+  }
+  SP <- SpatialPolygons(polys)
+  voronoi <- SpatialPolygonsDataFrame(SP, 
+                data=data.frame(x=crds[,1], 
+                                y=crds[,2], 
+                                layer@data,
+                                row.names=sapply(slot(SP, 'polygons'), 
+                                                 function(x) slot(x, 'ID'))))
+  proj4string(voronoi) <- CRS(proj4string(layer))
+  return(voronoi)
+}
+```
+
+
+```{r fig.cap='Nearest neighbour interpolation of the smokey mountain data: (left) points; (right) Voronoi diagram'}
+sm_sp = SpatialPointsDataFrame(d[,.(x = Easting, y = Northing)],
+                               d[,.(x = Easting, y = Northing, Ph)])
+proj4string(sm_sp) = CRS("+init=epsg:32631")
+sm_voro = voronoipolygons(sm_sp)
+
+tmap_mode('plot')
+fpt = tm_shape(sm_sp) + tm_dots(size=0.1)
+fvr = tm_shape(sm_voro) + tm_borders()
+tmap_arrange(fpt, fvr)
+```
+
+
+Inverse distance weighting (use $\alpha = 0.5$)
+===============================================
+
+
+
+
+
+
+
+
+Kriging
+=======
+
