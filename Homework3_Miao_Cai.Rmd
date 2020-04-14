@@ -89,39 +89,14 @@ Inverse distance weighting (use $\alpha = 0.5$)
 ===============================================
 The *inverse distance weighting* (IDW) approach estimate the outcome ph at location ($x$, $y$) with a weighted mean of nearby observations.
 
+```{r}
+sample_sm = spsample(sm_voro, type = 'regular', n = 2000)
+idw_est = gstat::idw(Ph ~ 1, locations = sm_sp, newdata = sample_sm, idp = 0.5)
 
-```{r eval=FALSE}
-sample_sm = spsample(sm_voro, type = 'regular', n = 500)
-idw_est = gstat::idw(Ph ~ 1, data = sm_sp, newdata = sample_sm, idp = 0.5)
-  
+tmap_mode("view")
+tm_shape(idw_est) + 
+  tm_dots(col = 'var1.pred')
 ```
-
-
-
-```{r eval=FALSE, include=FALSE, echo=FALSE}
-library(gstat)
-library(tmap)
-data(fulmar)
-
-fulmar.spdf <- SpatialPointsDataFrame(cbind(fulmar$x,fulmar$y),
-                                      fulmar)
-fulmar.spdf <- fulmar.spdf[fulmar.spdf$year==1999,]
-proj4string(fulmar.spdf) <- CRS("+init=epsg:32631")
-fulmar.voro <- voronoipolygons(fulmar.spdf)
-
-tmap_mode('plot')
-fpt <- tm_shape(fulmar.spdf) + tm_dots(size=0.1)
-fvr <- tm_shape(fulmar.voro) + tm_borders()
-tmap_arrange(fpt,fvr)
-
-
-
-s.grid <- spsample(fulmar.voro,type='regular',n=6000)
-idw.est <- gstat::idw(fulmar~1,fulmar.spdf,
-                      newdata=s.grid,idp=1.0)
-```
-
-
 
 
 Kriging
