@@ -69,26 +69,57 @@ voronoipolygons = function(layer) {
 }
 ```
 
+Nearest neighbour interpolation estimate the outcome ph at location ($x$, $y$) at the observation point closest to ($x$, $y$).
 
-```{r fig.cap='Nearest neighbour interpolation of the smokey mountain data: (left) points; (right) Voronoi diagram'}
+```{r fig.cap='Nearest neighbour interpolation of the smokey mountain data: points and Voronoi diagram'}
 sm_sp = SpatialPointsDataFrame(d[,.(x = Easting, y = Northing)],
                                d[,.(x = Easting, y = Northing, Ph)])
 proj4string(sm_sp) = CRS("+init=epsg:32631")
 sm_voro = voronoipolygons(sm_sp)
 
-tmap_mode('plot')
-fpt = tm_shape(sm_sp) + tm_dots(size=0.1)
-fvr = tm_shape(sm_voro) + tm_borders()
-tmap_arrange(fpt, fvr)
+tm_shape(sm_voro) + 
+  tm_fill(col = 'Ph', title = 'Ph') + 
+  tm_borders() + 
+  tm_dots(size = 0.1)
 ```
+
 
 
 Inverse distance weighting (use $\alpha = 0.5$)
 ===============================================
+The *inverse distance weighting* (IDW) approach estimate the outcome ph at location ($x$, $y$) with a weighted mean of nearby observations.
+
+
+```{r eval=FALSE}
+sample_sm = spsample(sm_voro, type = 'regular', n = 500)
+idw_est = gstat::idw(Ph ~ 1, data = sm_sp, newdata = sample_sm, idp = 0.5)
+  
+```
 
 
 
+```{r eval=FALSE, include=FALSE, echo=FALSE}
+library(gstat)
+library(tmap)
+data(fulmar)
 
+fulmar.spdf <- SpatialPointsDataFrame(cbind(fulmar$x,fulmar$y),
+                                      fulmar)
+fulmar.spdf <- fulmar.spdf[fulmar.spdf$year==1999,]
+proj4string(fulmar.spdf) <- CRS("+init=epsg:32631")
+fulmar.voro <- voronoipolygons(fulmar.spdf)
+
+tmap_mode('plot')
+fpt <- tm_shape(fulmar.spdf) + tm_dots(size=0.1)
+fvr <- tm_shape(fulmar.voro) + tm_borders()
+tmap_arrange(fpt,fvr)
+
+
+
+s.grid <- spsample(fulmar.voro,type='regular',n=6000)
+idw.est <- gstat::idw(fulmar~1,fulmar.spdf,
+                      newdata=s.grid,idp=1.0)
+```
 
 
 
