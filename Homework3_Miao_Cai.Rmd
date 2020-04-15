@@ -7,6 +7,8 @@ date: "4/2/2020"
 output:
   pdf_document: 
     number_sections: true
+    #always_allow_html: true
+always_allow_html: true
 header-includes:
   - \usepackage{booktabs}
   - \usepackage{float}
@@ -43,7 +45,7 @@ Nearest neighbor interpolation (using Voronoi polygons)
 =======================================================
 
 ```{r}
-pacman::p_load(sp, deldir, tmap)
+pacman::p_load(sp, deldir, tmap, gstat)
 
 # Modified Carson Farmer code
 voronoipolygons = function(layer) {
@@ -90,7 +92,7 @@ Inverse distance weighting (use $\alpha = 0.5$)
 The *inverse distance weighting* (IDW) approach estimate the outcome ph at location ($x$, $y$) with a weighted mean of nearby observations.
 
 ```{r}
-sample_sm = spsample(sm_voro, type = 'regular', n = 2000)
+sample_sm = spsample(sm_voro, type = 'regular', n = 5000)
 idw_est = gstat::idw(Ph ~ 1, locations = sm_sp, newdata = sample_sm, idp = 0.5)
 
 tmap_mode("view")
@@ -101,4 +103,43 @@ tm_shape(idw_est) +
 
 Kriging
 =======
+Kriging defines the outcome $z$ at location $x_i$ using the following function:
+
+$$z(x_i) = f(x_i) + \nu(x_i) + \epsilon_i$$
+
+where $f(x_i)$ is the true function, $\nu(x_i)$ is a random function, and $\epsilon_i \sim \text{i.i.d. Normal}(0, \sigma^2)$.
+
+```{r fig.cap='Kriging semivariogram for the Great Smokey Mountain data'}
+sm_evgm = variogram(Ph ~ 1, sm_sp)
+sm_fvgm = fit.variogram(sm_evgm, vgm('Mat'))
+plot(sm_evgm, model = sm_fvgm)
+```
+
+An eyeball estimate of the sill, range, and nugget:
+
+- **sill** (the $z$ value where the semivariogram first becomes flat): 0.19
+- **range** (the $d$ value where the semivariogram first becomes flat): 45
+- **nugget** (the $z$-value at a distance of 0): 0.01.
+
+```{r}
+sample_sm = spsample(sm_voro, type = 'regular', n = 5000)
+krig_est = krige(Ph ~ 1, sm_sp, newdata = sample_sm, model = sm_fvgm)
+krig_grid = SpatialPixelsDataFrame(krig_est, krig_est@data)
+```
+
+```{r eval=FALSE}
+krig_map_est = tm_shape(krig_grid) + 
+  tm_raster(col = 'var1.pred', title = 'Ph Density', palette ='Reds') + 
+  tm_layout(legend.bg.color = 'white',legend.frame = TRUE)
+
+krig_map_var = tm_shape(krig_grid) + 
+  tm_raster(col = 'var1.var', title = 'Estimate Variance', palette='Reds') + 
+  tm_layout(legend.bg.color = 'white', legend.frame = TRUE)
+
+tmap_arrange(krig_map_est, krig_map_var, ncol = 2)
+```
+
+```{r fig.cap='Kriging estimates of Ph density (left) and associated variance (right) for the Great Smokey mountain data', echo=FALSE, out.width = "\\textwidth"}
+knitr::include_graphics('figures/6_8Kriging_estimates.png')
+```
 
