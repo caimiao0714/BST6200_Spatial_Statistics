@@ -1,0 +1,53 @@
+---
+title: | 
+  | BST 6200 Spatial Statistics and Disease Mapping
+  | Homework 4
+author: "Miao Cai"
+output:
+  pdf_document: 
+    number_sections: true
+    #always_allow_html: true
+always_allow_html: true
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Overall Goal**: Perform an ecological study of the relationship between smoking and pancreatic cancer rates in the state of Minnesota.
+
+Obtain the shape file for Minnesota through the tigris package.
+
+Obtain the smoking data by selecting Minnesota and Adult Smoking here:
+
+[https://www.countyhealthrankings.org/explore-health-rankings/measures-data-sources/county-health-rankings-model/health-factors/health-behaviors/tobacco-use](https://www.countyhealthrankings.org/explore-health-rankings/measures-data-sources/county-health-rankings-model/health-factors/health-behaviors/tobacco-use)
+
+You can probably copy the data and paste it into Excel.
+
+Obtain the number of cases and the population size here: [https://data.web.health.state.mn.us/cancer_query](https://data.web.health.state.mn.us/cancer_query).
+
+Use shift-click to select all counties. Then select “Pancreas” under Indicator, “2012-2016” under Year, and “All” under Sex. Then click “Submit” and finally “Download” at the bottom of the data. Two of the columns in the resulting file are “count” and “population”. You will need both of these. You might want to clean up this file using Excel.
+
+As part of your report, give choropleth maps of smoking rates and pancreatic cancer rates. Compute Moran’s I for both and assess their significance.
+
+Run a regression model of the form:
+
+$$
+\begin{aligned}
+Y_i & \sim \text{Poisson}(P_i\eta_i)\\
+\text{where}\\
+\eta_i & = \exp(\beta_0 + \beta_1x_i + u_i + \nu_i)\\
+P_i & = \text{population of county } i\\
+u_i & \text{ is correlated heterogeneity of county }i\\
+v_i & \text{ is uncorrelated heterogeity of county }i\\
+x_i & \text{ is the smoking rate of county } i
+\end{aligned}
+$$
+
+Write a report addressing the question of smoking and pancreatic cancer. The project shouldn’t be too long. I’m thinking something like 3 to 6 pages, counting figures.
+
+[Note: This project is much like the term project for the course, except I have pointed you to the data and given you a specific model with just one predictor variable (smoking). You should look for more than one predictor variable in your term project model.]
+
