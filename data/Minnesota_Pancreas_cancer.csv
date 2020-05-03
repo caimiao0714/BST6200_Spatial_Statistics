@@ -1,0 +1,89 @@
+fips,location,year,type,age,sex,count,population,rate,unstable,ci,lci,uci
+27000,Minnesota,2012-2016,Pancreas,All Ages,All,4131,27254706,13.1,FALSE,(12.7 - 13.5),12.7,13.5
+27001,Aitkin,2012-2016,Pancreas,All Ages,All,24,79419,12.9,FALSE,(8.2 - 21.2),8.2,21.2
+27003,Anoka,2012-2016,Pancreas,All Ages,All,220,1709067,12.4,FALSE,(10.8 - 14.2),10.8,14.2
+27005,Becker,2012-2016,Pancreas,All Ages,All,30,166637,13,FALSE,(8.6 - 19.1),8.6,19.1
+27007,Beltrami,2012-2016,Pancreas,All Ages,All,37,227854,14.8,FALSE,(10.3 - 20.7),10.3,20.7
+27009,Benton,2012-2016,Pancreas,All Ages,All,28,195535,14.3,FALSE,(9.4 - 20.8),9.4,20.8
+27011,Big Stone,2012-2016,Pancreas,All Ages,All,6,25301,12.3 (UR),TRUE,(4.4 - 32.3),4.4,32.3
+27013,Blue Earth,2012-2016,Pancreas,All Ages,All,39,326830,11.6,FALSE,(8.1 - 16.1),8.1,16.1
+27015,Brown,2012-2016,Pancreas,All Ages,All,27,126430,14.8,FALSE,(9.4 - 22.6),9.4,22.6
+27017,Carlton,2012-2016,Pancreas,All Ages,All,38,176806,14.9,FALSE,(10.5 - 20.8),10.5,20.8
+27019,Carver,2012-2016,Pancreas,All Ages,All,50,485735,11.7,FALSE,(8.5 - 15.5),8.5,15.5
+27021,Cass,2012-2016,Pancreas,All Ages,All,35,143102,13.6,FALSE,(9.4 - 19.6),9.4,19.6
+27023,Chippewa,2012-2016,Pancreas,All Ages,All,14,60336,15.2,FALSE,(8.2 - 26.8),8.2,26.8
+27025,Chisago,2012-2016,Pancreas,All Ages,All,35,269633,10.5,FALSE,(7.3 - 14.8),7.3,14.8
+27027,Clay,2012-2016,Pancreas,All Ages,All,52,306810,15.9,FALSE,(11.8 - 20.9),11.8,20.9
+27029,Clearwater,2012-2016,Pancreas,All Ages,All,10,43918,14.5,FALSE,(6.9 - 28.3),6.9,28.3
+27031,Cook,2012-2016,Pancreas,All Ages,All,10,26132,18.3,FALSE,(8.6 - 39.9),8.6,39.9
+27033,Cottonwood,2012-2016,Pancreas,All Ages,All,12,57464,12.8,FALSE,(6.5 - 23.8),6.5,23.8
+27035,Crow Wing,2012-2016,Pancreas,All Ages,All,54,315892,11.2,FALSE,(8.3 - 14.8),8.3,14.8
+27037,Dakota,2012-2016,Pancreas,All Ages,All,247,2056273,11.7,FALSE,(10.2 - 13.3),10.2,13.3
+27039,Dodge,2012-2016,Pancreas,All Ages,All,10,101928,8.8,FALSE,(4.2 - 16.5),4.2,16.5
+27041,Douglas,2012-2016,Pancreas,All Ages,All,48,183166,16.6,FALSE,(12.2 - 22.3),12.2,22.3
+27043,Faribault,2012-2016,Pancreas,All Ages,All,20,70222,17.4,FALSE,(10.5 - 28.1),10.5,28.1
+27045,Fillmore,2012-2016,Pancreas,All Ages,All,15,103969,9.3,FALSE,(5.1 - 16.2),5.1,16.2
+27047,Freeborn,2012-2016,Pancreas,All Ages,All,38,153589,16,FALSE,(11.1 - 22.6),11.1,22.6
+27049,Goodhue,2012-2016,Pancreas,All Ages,All,34,230534,9.9,FALSE,(6.8 - 14.1),6.8,14.1
+27051,Grant,2012-2016,Pancreas,All Ages,All,6,29604,11.1 (UR),TRUE,(4.0 - 28.1),4,28.1
+27053,Hennepin,2012-2016,Pancreas,All Ages,All,885,6056561,14,FALSE,(13.1 - 15.0),13.1,15
+27055,Houston,2012-2016,Pancreas,All Ages,All,18,93654,12.5,FALSE,(7.1 - 20.9),7.1,20.9
+27057,Hubbard,2012-2016,Pancreas,All Ages,All,28,103153,16.7,FALSE,(10.9 - 25.2),10.9,25.2
+27059,Isanti,2012-2016,Pancreas,All Ages,All,18,191480,7.5,FALSE,(4.4 - 12.1),4.4,12.1
+27061,Itasca,2012-2016,Pancreas,All Ages,All,35,226193,10.1,FALSE,(6.9 - 14.5),6.9,14.5
+27063,Jackson,2012-2016,Pancreas,All Ages,All,13,50882,13.6,FALSE,(6.7 - 26.0),6.7,26
+27065,Kanabec,2012-2016,Pancreas,All Ages,All,12,79684,10.8,FALSE,(5.5 - 19.8),5.5,19.8
+27067,Kandiyohi,2012-2016,Pancreas,All Ages,All,29,212514,10.6,FALSE,(7.1 - 15.5),7.1,15.5
+27069,Kittson,2012-2016,Pancreas,All Ages,All,4,22168,7.8 (UR),TRUE,(2.0 - 28.2),2,28.2
+27071,Koochiching,2012-2016,Pancreas,All Ages,All,19,64508,18.3,FALSE,(10.8 - 30.1),10.8,30.1
+27073,Lac qui Parle,2012-2016,Pancreas,All Ages,All,12,34635,20,FALSE,(9.6 - 39.2),9.6,39.2
+27075,Lake,2012-2016,Pancreas,All Ages,All,8,53161,10.2 (UR),TRUE,(3.8 - 22.9),3.8,22.9
+27077,Lake of the Woods,2012-2016,Pancreas,All Ages,All,2,19408,5.9 (UR),TRUE,(0.7 - 30.1),0.7,30.1
+27079,Le Sueur,2012-2016,Pancreas,All Ages,All,27,138596,15.6,FALSE,(10.3 - 23.0),10.3,23
+27081,Lincoln,2012-2016,Pancreas,All Ages,All,4,28696,7.9 (UR),TRUE,(2.1 - 24.5),2.1,24.5
+27083,Lyon,2012-2016,Pancreas,All Ages,All,21,128737,15.2,FALSE,(9.3 - 23.5),9.3,23.5
+27085,McLeod,2012-2016,Pancreas,All Ages,All,29,179138,11.7,FALSE,(7.8 - 17.2),7.8,17.2
+27087,Mahnomen,2012-2016,Pancreas,All Ages,All,6,27408,19.1 (UR),TRUE,(6.7 - 43.4),6.7,43.4
+27089,Marshall,2012-2016,Pancreas,All Ages,All,10,47098,14.8,FALSE,(6.9 - 28.8),6.9,28.8
+27091,Martin,2012-2016,Pancreas,All Ages,All,17,101025,10.8,FALSE,(6.0 - 18.5),6,18.5
+27093,Meeker,2012-2016,Pancreas,All Ages,All,19,115431,10.8,FALSE,(6.4 - 17.4),6.4,17.4
+27095,Mille Lacs,2012-2016,Pancreas,All Ages,All,23,127929,13,FALSE,(8.2 - 19.9),8.2,19.9
+27097,Morrison,2012-2016,Pancreas,All Ages,All,27,164431,11.9,FALSE,(7.8 - 17.7),7.8,17.7
+27099,Mower,2012-2016,Pancreas,All Ages,All,34,196784,12.6,FALSE,(8.6 - 17.9),8.6,17.9
+27101,Murray,2012-2016,Pancreas,All Ages,All,10,42199,17.7,FALSE,(7.5 - 35.6),7.5,35.6
+27103,Nicollet,2012-2016,Pancreas,All Ages,All,16,166434,9.4,FALSE,(5.3 - 15.4),5.3,15.4
+27105,Nobles,2012-2016,Pancreas,All Ages,All,22,109050,16.2,FALSE,(10.1 - 25.0),10.1,25
+27107,Norman,2012-2016,Pancreas,All Ages,All,6,32952,12.1 (UR),TRUE,(4.4 - 28.9),4.4,28.9
+27109,Olmsted,2012-2016,Pancreas,All Ages,All,118,750424,14.2,FALSE,(11.7 - 17.1),11.7,17.1
+27111,Otter Tail,2012-2016,Pancreas,All Ages,All,52,287825,10.6,FALSE,(7.9 - 14.2),7.9,14.2
+27113,Pennington,2012-2016,Pancreas,All Ages,All,16,70858,15.9,FALSE,(9.0 - 26.7),9,26.7
+27115,Pine,2012-2016,Pancreas,All Ages,All,37,145280,17.9,FALSE,(12.5 - 25.2),12.5,25.2
+27117,Pipestone,2012-2016,Pancreas,All Ages,All,10,46457,11.5,FALSE,(5.2 - 23.8),5.2,23.8
+27119,Polk,2012-2016,Pancreas,All Ages,All,36,157707,17.4,FALSE,(12.0 - 24.5),12,24.5
+27121,Pope,2012-2016,Pancreas,All Ages,All,8,54582,7.8 (UR),TRUE,(3.3 - 17.4),3.3,17.4
+27123,Ramsey,2012-2016,Pancreas,All Ages,All,372,2662847,13.1,FALSE,(11.7 - 14.5),11.7,14.5
+27125,Red Lake,2012-2016,Pancreas,All Ages,All,5,20114,18.7 (UR),TRUE,(6.0 - 46.7),6,46.7
+27127,Redwood,2012-2016,Pancreas,All Ages,All,9,77698,8.8 (UR),TRUE,(3.9 - 17.7),3.9,17.7
+27129,Renville,2012-2016,Pancreas,All Ages,All,12,74629,9.2,FALSE,(4.7 - 17.3),4.7,17.3
+27131,Rice,2012-2016,Pancreas,All Ages,All,46,324731,12.6,FALSE,(9.2 - 16.9),9.2,16.9
+27133,Rock,2012-2016,Pancreas,All Ages,All,6,47158,8.0 (UR),TRUE,(2.9 - 19.2),2.9,19.2
+27135,Roseau,2012-2016,Pancreas,All Ages,All,14,77869,13,FALSE,(7.0 - 22.6),7,22.6
+27137,St. Louis,2012-2016,Pancreas,All Ages,All,186,1001800,13.3,FALSE,(11.4 - 15.4),11.4,15.4
+27139,Scott,2012-2016,Pancreas,All Ages,All,80,696653,13.8,FALSE,(10.8 - 17.3),10.8,17.3
+27141,Sherburne,2012-2016,Pancreas,All Ages,All,58,455004,14.2,FALSE,(10.6 - 18.5),10.6,18.5
+27143,Sibley,2012-2016,Pancreas,All Ages,All,14,74643,13.2,FALSE,(7.2 - 22.9),7.2,22.9
+27145,Stearns,2012-2016,Pancreas,All Ages,All,120,770558,14.6,FALSE,(12.1 - 17.5),12.1,17.5
+27147,Steele,2012-2016,Pancreas,All Ages,All,30,182482,13,FALSE,(8.7 - 18.9),8.7,18.9
+27149,Stevens,2012-2016,Pancreas,All Ages,All,14,48899,18.9,FALSE,(10.2 - 33.5),10.2,33.5
+27151,Swift,2012-2016,Pancreas,All Ages,All,6,47470,6.8 (UR),TRUE,(2.5 - 17.2),2.5,17.2
+27153,Todd,2012-2016,Pancreas,All Ages,All,25,122258,15.4,FALSE,(9.6 - 23.5),9.6,23.5
+27155,Traverse,2012-2016,Pancreas,All Ages,All,4,16873,9.8 (UR),TRUE,(2.4 - 36.8),2.4,36.8
+27157,Wabasha,2012-2016,Pancreas,All Ages,All,14,107380,10.3,FALSE,(5.4 - 18.1),5.4,18.1
+27159,Wadena,2012-2016,Pancreas,All Ages,All,6,68069,5.1 (UR),TRUE,(1.8 - 12.6),1.8,12.6
+27161,Waseca,2012-2016,Pancreas,All Ages,All,19,94875,17.8,FALSE,(10.5 - 28.2),10.5,28.2
+27163,Washington,2012-2016,Pancreas,All Ages,All,175,1242280,13.4,FALSE,(11.4 - 15.6),11.4,15.6
+27165,Watonwan,2012-2016,Pancreas,All Ages,All,11,54954,11.6,FALSE,(5.6 - 22.5),5.6,22.5
+27167,Wilkin,2012-2016,Pancreas,All Ages,All,4,32255,9.7 (UR),TRUE,(2.1 - 27.8),2.1,27.8
+27169,Winona,2012-2016,Pancreas,All Ages,All,45,255427,14.9,FALSE,(10.8 - 20.2),10.8,20.2
+27171,Wright,2012-2016,Pancreas,All Ages,All,77,648622,12.6,FALSE,(9.9 - 15.8),9.9,15.8
+27173,Yellow Medicine,2012-2016,Pancreas,All Ages,All,9,49930,12.8 (UR),TRUE,(5.4 - 26.2),5.4,26.2

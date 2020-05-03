@@ -17,7 +17,13 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+
 **Overall Goal**: Perform an ecological study of the relationship between smoking and pancreatic cancer rates in the state of Minnesota.
+
+
+Homework description
+====================
 
 Obtain the shape file for Minnesota through the tigris package.
 
@@ -50,4 +56,60 @@ $$
 Write a report addressing the question of smoking and pancreatic cancer. The project shouldn’t be too long. I’m thinking something like 3 to 6 pages, counting figures.
 
 [Note: This project is much like the term project for the course, except I have pointed you to the data and given you a specific model with just one predictor variable (smoking). You should look for more than one predictor variable in your term project model.]
+
+Data
+====
+
+```{r}
+pacman::p_load(tigris, sp, ggplot2, nimble,
+               tmap, dplyr, sf, data.table, rgeos)
+
+MN = counties("Minnesota", cb = TRUE)
+
+
+adult_smoke = fread("data/Minnesota_adult_smoking.csv") %>% 
+  select(FIPS, smoking_rate = `% Smokers`)
+pancreas = fread("data/Minnesota_Pancreas_cancer.csv") %>% 
+  select(FIPS = fips, 
+         year, 
+         N_pancreas = count, 
+         population, 
+         rate_pancreas = rate) %>% 
+  mutate(rate_pancreas = gsub(" \\(UR\\)", "", rate_pancreas) %>% 
+           as.numeric())
+
+MN_sf = st_as_sf(MN) %>% 
+  mutate(FIPS = as.integer(paste0(STATEFP, COUNTYFP))) %>% 
+  select(NAME, FIPS) %>% 
+  arrange(NAME) %>% 
+  left_join(pancreas, by = 'FIPS') %>% 
+  left_join(adult_smoke, by = 'FIPS')
+
+head(MN_sf)
+```
+
+Choropleth maps
+===============
+
+```{r fig.cap='Choropleth maps of pancreas cancer rates (left) and adult smoking rates (right) in Minnesota'}
+map_pancreas = tm_shape(MN_sf) +
+  tm_fill(title = "Pancreas cancer\nrates",
+          col = "rate_pancreas", 
+          palette = "Reds") +
+  tm_borders(col = "black") + 
+  tm_layout(main.title = "Pancreas cancer rates in Minnesota",  
+            main.title.size = 1.2, frame = FALSE) + 
+  tm_legend(legend.position = c("right", "center"))
+
+map_smoking = tm_shape(MN_sf) +
+  tm_fill(title = "Adult smoking\nrates",
+          col = "smoking_rate", 
+          palette = "Reds") +
+  tm_borders(col = "black") +
+  tm_layout(main.title = "Adult smoking rates in Minnesota",  
+            main.title.size = 1.2, frame = FALSE) + 
+  tm_legend(legend.position = c("right", "center"))
+
+tmap_arrange(map_pancreas, map_smoking, ncol = 2)
+```
 
