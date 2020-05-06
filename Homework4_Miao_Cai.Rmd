@@ -60,56 +60,182 @@ Write a report addressing the question of smoking and pancreatic cancer. The pro
 Data
 ====
 
-```{r}
-pacman::p_load(tigris, sp, ggplot2, nimble,
-               tmap, dplyr, sf, data.table, rgeos)
+This part shows the R code to read Minnesota `.shp` file from the `tigris` package, pancreas cancer and adult smoking rates data, and data cleaning and merging process.
 
+```{r message = FALSE}
+pacman::p_load(tigris, sp, spdep, rgeos, sf, tmap, 
+               tidyverse, data.table, nimble)
 MN = counties("Minnesota", cb = TRUE)
 
-
 adult_smoke = fread("data/Minnesota_adult_smoking.csv") %>% 
-  select(FIPS, smoking_rate = `% Smokers`)
+  dplyr::select(FIPS, smoking_rate = `% Smokers`)
 pancreas = fread("data/Minnesota_Pancreas_cancer.csv") %>% 
-  select(FIPS = fips, 
-         year, 
-         N_pancreas = count, 
-         population, 
-         rate_pancreas = rate) %>% 
-  mutate(rate_pancreas = gsub(" \\(UR\\)", "", rate_pancreas) %>% 
+  dplyr::select(FIPS = fips, year, N_pancreas = count, 
+         population, pancreas_rate = rate) %>% 
+  mutate(pancreas_rate = gsub(" \\(UR\\)", "", pancreas_rate) %>% 
            as.numeric())
 
-MN_sf = st_as_sf(MN) %>% 
+MN_data = MN@data %>% 
   mutate(FIPS = as.integer(paste0(STATEFP, COUNTYFP))) %>% 
-  select(NAME, FIPS) %>% 
-  arrange(NAME) %>% 
+  dplyr::select(NAME, FIPS) %>% 
   left_join(pancreas, by = 'FIPS') %>% 
   left_join(adult_smoke, by = 'FIPS')
 
-head(MN_sf)
+MN@data = MN_data
 ```
 
 Choropleth maps
 ===============
 
-```{r fig.cap='Choropleth maps of pancreas cancer rates (left) and adult smoking rates (right) in Minnesota'}
-map_pancreas = tm_shape(MN_sf) +
+```{r choro, fig.cap='Choropleth maps of pancreas cancer rates (left) and adult smoking rates (right) in Minnesota'}
+map_pancreas = tm_shape(MN) +
   tm_fill(title = "Pancreas cancer\nrates",
-          col = "rate_pancreas", 
+          col = "pancreas_rate", 
+          n = 6, style = "jenks",
           palette = "Reds") +
   tm_borders(col = "black") + 
   tm_layout(main.title = "Pancreas cancer rates in Minnesota",  
             main.title.size = 1.2, frame = FALSE) + 
-  tm_legend(legend.position = c("right", "center"))
+  tm_legend(legend.position = c(0.67, 0.2))
 
-map_smoking = tm_shape(MN_sf) +
+map_smoking = tm_shape(MN) +
   tm_fill(title = "Adult smoking\nrates",
           col = "smoking_rate", 
+          n = 6, style = "jenks",
           palette = "Reds") +
   tm_borders(col = "black") +
   tm_layout(main.title = "Adult smoking rates in Minnesota",  
             main.title.size = 1.2, frame = FALSE) + 
-  tm_legend(legend.position = c("right", "center"))
+  tm_legend(legend.position = c(0.67, 0.2))
 
 tmap_arrange(map_pancreas, map_smoking, ncol = 2)
 ```
+
+Based on visual inspection of the two choropleth maps, it seems that adult smoking rates have a pretty clear pattern of spatial clustering, while pancreas cancer rates do not have such an obvious trend.
+
+Moran's I
+=========
+
+```{r}
+MN_nb = spdep::poly2nb(MN, queen = T)
+MN_weight = spdep::nb2listw(MN_nb, style = 'W', zero.policy = TRUE)
+```
+
+```{r}
+spdep::moran.test(MN$pancreas_rate, MN_weight)
+```
+
+I find that the Moran's I of pancreas cancer rate is very close to 0 and not statistically significant, which suggest that there is no significant spatial clustering effect for county-level pancreas cancer rates in Minnesota.
+
+```{r}
+spdep::moran.test(MN$smoking_rate, MN_weight)
+```
+
+The Moran's I of adult smoking rate is around 0.3 and statistically significant, which suggest that there is significant spatial clustering effect for county-level adult smoking rates in Minnesota.
+
+<!--
+Although the Moran's I tests for pancreas cancer and adult smoking rates in Minnesota suggest no spatial clustering, we notice that the variability of the two rates across counties is very small.
+-->
+
+Regression modeling
+===================
+
+```{r}
+MN_nb = spdep::poly2nb(MN, queen = T)
+MN_net = spdep::nb2lines(MN_nb , coords = coordinates(MN))
+MN_lw = spdep::nb2listw( MN_nb )
+
+plot(MN)
+plot(MN_nb, coordinates(MN), add = TRUE, points = FALSE, pch = 16, col = 'red')
+```
+
+```{r}
+k = nrow(MN@data)
+num = rep(0, k)
+for (i in 1:k) num[i] = length( MN_lw$neighbours[[i]] )
+adj = c()
+for (i in 1:k) adj = c(adj, MN_lw$neighbours[[i]] )
+L = length(adj)
+
+code = nimbleCode({
+  mu ~ dnorm(0, sd = 5)
+  tau ~ dgamma(1 , 0.001)
+  tau1 ~ dgamma(1 , 0.001)
+  beta ~ dnorm(0, sd = 5)
+  for (i in 1:L)
+    weights[i]  <-  1
+  s[1:k] ~ dcar_normal(adj[1:L], weights[1:L], num[1:k], tau, zero_mean = 1)
+  for (i in 1:k) {
+    log(theta[i])  <-  mu + beta * x[i] + s[i] + v[i]
+    y[i] ~ dpois(population[i] * theta[i])
+    v[i] ~ dnorm(0 , tau1)
+  }
+})
+
+constants = list(
+  k = k,
+  L = L,
+  num = num,
+  adj = adj,
+  population = MN$population
+)
+data = list(y = MN$N_pancreas, x = MN$smoking_rate)
+inits = list(mu = 0, tau = 1, s = rep(0, k), beta = 0, tau1 = 1)
+
+MN_model = nimbleModel(
+  code = code ,
+  constants = constants ,
+  data = data ,
+  inits = inits
+)
+
+compiled_MN_model = compileNimble( MN_model )
+MN_Conf = configureMCMC( MN_model , print = TRUE )
+MN_Conf$addMonitors(c("mu","tau","theta", "beta", "tau1"))
+MN_Conf_MCMC = buildMCMC( MN_Conf )
+MN_complie_MCMC = compileNimble( MN_Conf_MCMC )
+
+set.seed(1)
+MCMC_samples = runMCMC(MN_complie_MCMC, niter = 40000, nburnin = 20000,
+                   inits = inits, nchains = 1, samplesAsCodaMCMC = TRUE)
+```
+
+
+```{r}
+par(mfrow = c(3, 2), mai = c(.6, .5, .4, .1), mgp = c(1.8, 0.7, 0))
+ts.plot(MCMC_samples[ , 'mu'], xlab = 'iteration', col="red" , lwd=1.5 ,
+        ylab = expression(mu), main = expression(mu))
+ts.plot(MCMC_samples[ , 'tau'], xlab = 'iteration', col="blue" , lwd=1.5 ,
+        ylab = expression(tau), main = expression(tau))
+ts.plot(MCMC_samples[ , 'tau1'], xlab = 'iteration', col="blue" , lwd=1.5 ,
+        ylab = expression(tau[1]), main = expression(tau[1]))
+ts.plot(MCMC_samples[ , 'theta[1]'], xlab = 'iteration', col="blue" , lwd=1.5 ,
+        ylab = expression(theta[1]), main = expression(theta[1]))
+ts.plot(MCMC_samples[ , 'theta[2]'], xlab = 'iteration', col="blue" , lwd=1.5 ,
+        ylab = expression(theta[2]), main = expression(theta[2]))
+ts.plot(MCMC_samples[ , 'beta'], xlab = 'iteration', col="blue" , lwd=1.5 ,
+        ylab = expression(beta), main = expression(beta))
+```
+
+
+```{r}
+source('code/DBDA2E-utilities.R')
+par(mfrow = c(2, 2), mai = c(.6, .5, .4, .1), mgp = c(1.8, 0.7, 0))
+plotPost(MCMC_samples[ , 'mu'], main = expression(mu))
+plotPost(MCMC_samples[ , 'tau'], main = expression(tau))
+plotPost(MCMC_samples[ , 'tau1'], main = expression(tau[1]))
+plotPost(MCMC_samples[ , 'beta'], main = expression(beta))
+```
+
+The posterior mean of the parameter $\beta$ is $-0.00215$ (95% credible interval: $[-0.0339, -0.253]$). Since the 95% credible interval covers 0, it suggests that adult smoking rate does not have significant effects on pancreas cancer rates in our model.
+
+
+
+\clearpage
+
+```{r}
+sessionInfo()
+```
+
+
 
